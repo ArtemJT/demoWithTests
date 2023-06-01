@@ -2,6 +2,7 @@ package com.example.demowithtests.service;
 
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.repository.Repository;
+import com.example.demowithtests.util.InputParameterException;
 import com.example.demowithtests.util.ResourceNotFoundException;
 import com.example.demowithtests.util.ResourceWasDeletedException;
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ public class ServiceBean implements Service {
     @Override
     public Employee getById(Integer id) {
         Employee employee = repository.findById(id)
-               // .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
+                // .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
                 .orElseThrow(ResourceNotFoundException::new);
          /*if (employee.getIsDeleted()) {
             throw new EntityNotFoundException("Employee was deleted with id = " + id);
@@ -52,13 +53,22 @@ public class ServiceBean implements Service {
 
     @Override
     public void removeById(Integer id) {
-        //repository.deleteById(id);
-        Employee employee = repository.findById(id)
-               // .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
-                .orElseThrow(ResourceWasDeletedException::new);
-        //employee.setIsDeleted(true);
-        repository.delete(employee);
-        //repository.save(employee);
+        idValidation(id);
+
+        Employee employee = repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+
+        if (!employee.isDeleted()) {
+            employee.setDeleted(true);
+            repository.save(employee);
+        } else {
+            throw new ResourceWasDeletedException();
+        }
+    }
+
+    private void idValidation(Integer id) {
+        if (id <= 0) {
+            throw new InputParameterException();
+        }
     }
 
     @Override
