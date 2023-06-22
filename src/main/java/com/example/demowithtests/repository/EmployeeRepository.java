@@ -55,6 +55,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     @Query(value = "select * from users " +
             "left join addresses on users.id = addresses.employee_id " +
-            "where addresses.employee_id is null", nativeQuery = true)
+            "where users.is_deleted = false " +
+            "and addresses.employee_id is null", nativeQuery = true)
     List<Employee> findAllNullAddresses();
 }
