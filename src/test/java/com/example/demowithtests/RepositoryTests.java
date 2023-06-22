@@ -11,12 +11,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 
 @DataJpaTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -152,6 +150,29 @@ public class RepositoryTests {
         assertThat(lowerCaseCountries).isEmpty();
     }
 
+    @Test
+    @Order(10)
+    @DisplayName("Find All Men From Ukraine Test")
+    void findAllMenFromUkraineTest() {
+        List<Employee> allMenFromUkraine = employeeRepository.findAllMenFromUkraine();
+        int size = allMenFromUkraine.size();
+
+        assertThat(allMenFromUkraine).isNotEmpty();
+        assertThat(allMenFromUkraine.get(size -1).getName()).isEqualTo("Денис");
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("Find All Employees with Null Addresses Test")
+    void findAllNullAddresses() {
+        List<Employee> allNullAddresses = employeeRepository.findAllNullAddresses();
+        int size = allNullAddresses.size();
+
+        assertThat(allNullAddresses).isNotEmpty();
+        assertThat(size).isEqualTo(3);
+        assertThat(allNullAddresses.get(size -1).getName()).isEqualTo("Степан");
+    }
+
     private List<Employee> addEmployeesIntoDB() {
         return List.of(
                 Employee.builder()
@@ -160,6 +181,25 @@ public class RepositoryTests {
                         .email(null)
                         .addresses(null)
                         .gender(null)
+                        .build(),
+
+                Employee.builder()
+                        .name("Max")
+                        .country("Ukraine")
+                        .gender(Gender.M)
+                        .build(),
+
+                Employee.builder()
+                        .name("Степан")
+                        .country("Україна")
+                        .gender(Gender.M)
+                        .build(),
+
+                Employee.builder()
+                        .name("Денис")
+                        .country("Украина")
+                        .gender(Gender.M)
+                        .addresses(Set.of(Address.builder().build()))
                         .build()
         );
     }

@@ -228,4 +228,14 @@ public class EmployeeServiceBean implements EmployeeService {
     public void updateLowerCaseCountriesToUpperCase() {
         employeeRepository.updateLowerCaseCountriesToUpperCase();
     }
+
+    @Override
+    public List<Employee> findAllUkrainianMen() {
+        return checkListIsEmpty(employeeRepository.findAllMenFromUkraine());
+    }
+
+    @Override
+    public List<Employee> findAllHomeless() {
+        return checkListIsEmpty(employeeRepository.findAllNullAddresses());
+    }
 }

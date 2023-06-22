@@ -1,5 +1,6 @@
 package com.example.demowithtests;
 
+import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Gender;
 import com.example.demowithtests.repository.EmployeeRepository;
@@ -19,6 +20,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -63,6 +65,22 @@ public class ServiceTests {
                         .email(null)
                         .addresses(null)
                         .gender(null)
+                        .build(),
+                Employee.builder()
+                        .name("Max")
+                        .country("Ukraine")
+                        .gender(Gender.M)
+                        .build(),
+                Employee.builder()
+                        .name("Степан")
+                        .country("Україна")
+                        .gender(Gender.M)
+                        .build(),
+                Employee.builder()
+                        .name("Денис")
+                        .country("Украина")
+                        .gender(Gender.M)
+                        .addresses(Set.of(Address.builder().build()))
                         .build()
         );
     }
@@ -171,5 +189,36 @@ public class ServiceTests {
 
         when(employeeRepository.findAllLowerCaseCountries()).thenReturn(Collections.emptyList());
         assertThrows(EntityNotFoundException.class, () -> service.filterLowerCaseCountries());
+    }
+
+    @Test
+    @DisplayName("Find All Ukrainian Men Test")
+    void findAllUkrainianMenTest() {
+
+        when(employeeRepository.findAllMenFromUkraine()).thenReturn(employeeList.stream()
+                .filter(e -> e.getGender() != null && e.getGender().equals(Gender.M)).toList());
+        List<Employee> allUkrainianMen = service.findAllUkrainianMen();
+        int size = allUkrainianMen.size();
+
+        assertThat(allUkrainianMen).isNotEmpty();
+        assertThat(allUkrainianMen.get(size -1).getName()).isEqualTo("Денис");
+
+        verify(employeeRepository).findAllMenFromUkraine();
+    }
+
+    @Test
+    @DisplayName("Find All Homeless Test")
+    void findAllHomelessTest() {
+
+        when(employeeRepository.findAllNullAddresses()).thenReturn(employeeList.stream()
+                .filter(e -> e.getAddresses() == null || e.getAddresses().isEmpty()).toList());
+        List<Employee> allHomeless = service.findAllHomeless();
+        int size = allHomeless.size();
+
+        assertThat(allHomeless).isNotEmpty();
+        assertThat(size).isEqualTo(4);
+        assertThat(allHomeless.get(size -1).getName()).isEqualTo("Степан");
+
+        verify(employeeRepository).findAllNullAddresses();
     }
 }

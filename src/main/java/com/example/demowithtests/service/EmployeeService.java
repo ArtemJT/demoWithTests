@@ -60,4 +60,8 @@ public interface EmployeeService extends EntityCheckingService<Employee> {
     List<Employee> filterLowerCaseCountries();
 
     void updateLowerCaseCountriesToUpperCase();
+
+    List<Employee> findAllUkrainianMen();
+
+    List<Employee> findAllHomeless();
 }

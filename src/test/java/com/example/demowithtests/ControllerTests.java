@@ -1,6 +1,7 @@
 package com.example.demowithtests;
 
 import com.example.demowithtests.domain.Employee;
+import com.example.demowithtests.domain.Gender;
 import com.example.demowithtests.dto.employee.EmployeeDto;
 import com.example.demowithtests.dto.employee.EmployeeReadDto;
 import com.example.demowithtests.dto.employee.EmployeeUpdateDto;
@@ -237,5 +238,47 @@ public class ControllerTests {
                 .andExpect(jsonPath("$[0].country", is("country")));
 
         verify(service).filterLowerCaseCountries();
+    }
+
+    @Test
+    @DisplayName("GET /api/employee/men-ukr")
+    void getUkrainianMenTest() throws Exception {
+        List<EmployeeReadDto> listDto = List.of(
+                EmployeeReadDto.builder()
+                        .name("Степан")
+                        .country("Україна")
+                        .gender(Gender.M)
+                        .build()
+                );
+
+        doReturn(listDto).when(employeeMapper).listToReadDto(anyList());
+
+        mockMvc.perform(get("/api/employee/men-ukr"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].name", is("Степан")));
+
+        verify(service).findAllUkrainianMen();
+    }
+
+    @Test
+    @DisplayName("GET /api/employee/no-address")
+    void getHomeless() throws Exception {
+        List<EmployeeReadDto> listDto = List.of(
+                EmployeeReadDto.builder()
+                        .name("Степан")
+                        .country("Україна")
+                        .gender(Gender.M)
+                        .build()
+                );
+
+        doReturn(listDto).when(employeeMapper).listToReadDto(anyList());
+
+        mockMvc.perform(get("/api/employee/no-address"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].name", is("Степан")));
+
+        verify(service).findAllHomeless();
     }
 }

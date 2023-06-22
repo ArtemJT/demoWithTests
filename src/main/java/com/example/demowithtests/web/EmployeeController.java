@@ -167,4 +167,16 @@ public class EmployeeController {
     public void updateLowerCaseCountriesToUpper() {
         employeeService.updateLowerCaseCountriesToUpperCase();
     }
+
+    @GetMapping("/employee/men-ukr")
+    @ResponseStatus(HttpStatus.OK)
+    public List<EmployeeReadDto> getUkrainianMen() {
+        return employeeMapper.listToReadDto(employeeService.findAllUkrainianMen());
+    }
+
+    @GetMapping("/employee/no-address")
+    @ResponseStatus(HttpStatus.OK)
+    public List<EmployeeReadDto> getHomeless() {
+        return employeeMapper.listToReadDto(employeeService.findAllHomeless());
+    }
 }
