@@ -47,16 +47,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
             "where country ~ '^[a-z]|^[а-я]'", nativeQuery = true)
     void updateLowerCaseCountriesToUpperCase();
 
-    @Query(value = "select e " +
-            "from Employee e " +
-            "where e.gender = com.example.demowithtests.domain.Gender.M " +
-            "and e.country in ('Ukraine', 'Україна', 'Украина') " +
-            "and e.isDeleted is false")
+    @Query(value = "select * from users " +
+            "where gender = 'M' " +
+            "and country in ('Ukraine', 'Україна', 'Украина') " +
+            "and is_deleted is false", nativeQuery = true)
     List<Employee> findAllMenFromUkraine();
 
-    @Query(value = "select e " +
-            "from Employee e " +
-            "where e.addresses.size = 0 " +
-            "and e.isDeleted is false")
+    @Query(value = "select * from users " +
+            "left join addresses on users.id = addresses.employee_id " +
+            "where addresses.employee_id is null", nativeQuery = true)
     List<Employee> findAllNullAddresses();
 }
