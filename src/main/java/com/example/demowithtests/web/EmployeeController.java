@@ -179,4 +179,10 @@ public class EmployeeController {
     public List<EmployeeReadDto> getHomeless() {
         return employeeMapper.listToReadDto(employeeService.findAllHomeless());
     }
+
+    @PatchMapping("/employee/send-to-ukr-men")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> sendEmailToUkrainianMen() {
+        return employeeService.sendUpdateEmailToUkrainianMen();
+    }
 }

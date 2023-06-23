@@ -64,4 +64,6 @@ public interface EmployeeService extends EntityCheckingService<Employee> {
     List<Employee> findAllUkrainianMen();
 
     List<Employee> findAllHomeless();
+
+    List<String> sendUpdateEmailToUkrainianMen();
 }

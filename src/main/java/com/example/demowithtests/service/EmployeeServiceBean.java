@@ -2,6 +2,9 @@ package com.example.demowithtests.service;
 
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.repository.EmployeeRepository;
+import com.example.demowithtests.service.emailSevice.EmailPattern;
+import com.example.demowithtests.service.emailSevice.EmailSenderService;
+import com.example.demowithtests.service.emailSevice.EmailSenderServiceBean;
 import com.example.demowithtests.util.exception.EmployeeNotFoundException;
 import com.example.demowithtests.util.exception.InputParameterException;
 import com.example.demowithtests.util.exception.ResourceNotFoundException;
@@ -28,6 +31,7 @@ public class EmployeeServiceBean implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 //    private final EntityCheckingService<Employee> entityCheckingService;
+    private final EmailSenderService emailSenderService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -237,5 +241,18 @@ public class EmployeeServiceBean implements EmployeeService {
     @Override
     public List<Employee> findAllHomeless() {
         return checkListIsEmpty(employeeRepository.findAllNullAddresses());
+    }
+
+    @Override
+    public List<String> sendUpdateEmailToUkrainianMen() {
+        List<Employee> allUkrainianMen = findAllUkrainianMen();
+        return allUkrainianMen.stream()
+                .filter(employee -> employee.getEmail() != null)
+                .map(employee -> {
+                    String email = employee.getEmail();
+                    String name = employee.getName();
+                    emailSenderService.sendEmail(email, name, EmailPattern.UPDATE);
+                    return email;
+                }).toList();
     }
 }
