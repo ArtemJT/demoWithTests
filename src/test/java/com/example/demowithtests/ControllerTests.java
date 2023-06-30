@@ -6,7 +6,7 @@ import com.example.demowithtests.dto.employee.EmployeeReadDto;
 import com.example.demowithtests.dto.employee.EmployeeUpdateDto;
 import com.example.demowithtests.service.EmployeeService;
 import com.example.demowithtests.util.mapper.EmployeeMapper;
-import com.example.demowithtests.web.EmployeeController;
+import com.example.demowithtests.web.EmployeeControllerBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -42,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(controllers = EmployeeController.class)
+@WebMvcTest(controllers = EmployeeControllerBean.class)
 @DisplayName("Employee Controller Tests")
 public class ControllerTests {
 
