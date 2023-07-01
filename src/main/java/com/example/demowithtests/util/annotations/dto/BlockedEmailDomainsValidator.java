@@ -3,6 +3,8 @@ package com.example.demowithtests.util.annotations.dto;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class BlockedEmailDomainsValidator implements ConstraintValidator<BlockedEmailDomains, String> {
 
@@ -18,12 +20,12 @@ public class BlockedEmailDomainsValidator implements ConstraintValidator<Blocked
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext) {
-        if (email != null) {
-            String emailDomain = email.substring(email.lastIndexOf('@') + 1);
-            return Arrays.stream(endings).noneMatch(emailDomain::endsWith) &&
-                    Arrays.stream(domains).noneMatch(emailDomain::contains);
-        }
-        return false;
+        return Stream.of(email)
+                .filter(Objects::nonNull)
+                .map(e -> e.substring(email.lastIndexOf('@') +1))
+                .filter(emailDomain -> Arrays.stream(endings).anyMatch(emailDomain::endsWith) ||
+                        Arrays.stream(domains).anyMatch(emailDomain::contains))
+                .findFirst().isEmpty();
     }
 
 }
