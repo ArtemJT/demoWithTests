@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class CountingCallingControllerMethodsAspect {
 
-    @Pointcut("execution(public * com.example.demowithtests.web.EmployeeController.*(..))")
+    @Pointcut("execution(public * com.example.demowithtests.web.EmployeeControllerBean.*(..))")
     public void callAtEmployeeController() {
     }
 

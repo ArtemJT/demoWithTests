@@ -15,7 +15,7 @@ import static com.example.demowithtests.util.annotations.aspect.logger.LogColour
 @Component
 public class LoggingControllerClassesAspect {
 
-    @Pointcut("execution(public * com.example.demowithtests.web.EmployeeController.*(..))")
+    @Pointcut("execution(public * com.example.demowithtests.web.EmployeeControllerBean.*(..))")
     public void callAtEmployeeControllersPublicMethods() {
     }
 

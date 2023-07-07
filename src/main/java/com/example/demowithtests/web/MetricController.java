@@ -1,24 +1,25 @@
 package com.example.demowithtests.web;
 
-import com.example.demowithtests.util.EndpointCallingCounter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Map;
 
 /**
  * @author Artem Kovalov on 25.06.2023
  */
-@RestController
-@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
-@RequiredArgsConstructor
-public class MetricController {
+public interface MetricController {
 
     @GetMapping("/stat")
-    public Map<String, Integer> getStatistic() {
-        return EndpointCallingCounter.getEndpointsStat();
-    }
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Returns statistics of all endpoints calling.",
+            description = "Request to read statistics of all endpoints calling", tags = {"Metric"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "OK. pam pam param."),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND. No endpoints callings yet")})
+    Map<String, Integer> getStatistic();
 }
