@@ -2,8 +2,10 @@ package com.example.demowithtests.service;
 
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Passport;
+import com.example.demowithtests.domain.PassportPhoto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,5 +63,9 @@ public interface EmployeeService {
 
     void updateLowerCaseCountriesToUpperCase();
 
-    Employee handPassportToEmployee(Integer employeeId, Integer passportId, String photoLink);
+    Employee handPassportToEmployee(Integer employeeId, Integer passportId, PassportPhoto photo);
+
+    Employee cancelPassport(Integer employeeId);
+
+    List<Passport> getAllCanceledPassports(Integer employeeId);
 }

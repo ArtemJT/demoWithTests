@@ -21,7 +21,7 @@ public class ServiceExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<ErrorDetails> handleLowerCaseCountries(WebRequest request) {
-        return getResponseEntity("No entities found", request, HttpStatus.NOT_FOUND);
+        return getResponseEntity("No records found", request, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(PassportHandedException.class)
@@ -29,9 +29,20 @@ public class ServiceExceptionHandler {
         return getResponseEntity("Passport already handed", request, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(PassportCanceledException.class)
+    protected ResponseEntity<ErrorDetails> handlePassportCanceled(WebRequest request) {
+        return getResponseEntity("Passport already handed and canceled", request, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(SQLException.class)
     protected ResponseEntity<ErrorDetails> handleRecordExists(WebRequest request) {
         return getResponseEntity("SQL EXCEPTION", request, HttpStatus.I_AM_A_TEAPOT);
+    }
+
+
+    @ExceptionHandler(ResourceWasDeletedException.class)
+    protected ResponseEntity<ErrorDetails> handleResourceDeleted(WebRequest request) {
+        return getResponseEntity("Resource already deleted", request, HttpStatus.NOT_FOUND);
     }
 
 }

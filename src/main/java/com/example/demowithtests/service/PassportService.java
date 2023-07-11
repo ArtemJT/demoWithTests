@@ -17,7 +17,9 @@ public interface PassportService {
 
     List<Passport> getAllNotHanded();
 
-    Passport addPhoto(Integer passportId, String photoLink);
+    Passport updatePhoto(Integer passportId, PassportPhoto photo);
 
-    Passport handPassport(Integer id, String photoLink);
+    Passport handPassport(Integer id, PassportPhoto photo);
+
+    Passport cancelPassport(Passport passport, Integer employeeId);
 }

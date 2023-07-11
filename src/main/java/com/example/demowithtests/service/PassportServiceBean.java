@@ -3,8 +3,10 @@ package com.example.demowithtests.service;
 import com.example.demowithtests.domain.Passport;
 import com.example.demowithtests.domain.PassportPhoto;
 import com.example.demowithtests.repository.PassportRepository;
+import com.example.demowithtests.util.exception.PassportCanceledException;
 import com.example.demowithtests.util.exception.PassportHandedException;
 import com.example.demowithtests.util.exception.ResourceNotFoundException;
+import com.example.demowithtests.util.mapper.PassportMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class PassportServiceBean implements PassportService {
 
     private final PassportRepository passportRepository;
+    private final PassportMapper passportMapper;
 
     @Override
     public Passport create(Passport passport) {
@@ -45,22 +48,37 @@ public class PassportServiceBean implements PassportService {
     }
 
     @Override
-    public Passport addPhoto(Integer passportId, String photoLink) {
+    public Passport updatePhoto(Integer passportId, PassportPhoto photo) {
         Passport passport = getById(passportId);
-        PassportPhoto photo = Optional.ofNullable(passport.getPhoto())
-                .orElse(PassportPhoto.builder().passport(passport).build());
-        photo.setPhotoLink(photoLink);
-        passport.setPhoto(photo);
+        if (passport.getPreviousOwner() != null) {
+            throw new PassportCanceledException();
+        }
+        if (!passport.getIsHanded()) {
+            throw new RuntimeException("Passport didn't hand yet");
+        }
+        PassportPhoto passportPhoto = passport.getPhoto();
+        passportPhoto.setPhotoLink(photo.getPhotoLink());
         return passportRepository.save(passport);
     }
 
     @Override
-    public Passport handPassport(Integer passportId, String photoLink) throws PassportHandedException {
-        Passport passport = addPhoto(passportId, photoLink);
-        if (passport.isHanded()) {
+    public Passport handPassport(Integer passportId, PassportPhoto photo) throws PassportHandedException {
+        Passport passport = getById(passportId);
+        if (passport.getIsHanded()) {
             throw new PassportHandedException();
         }
-        passport.setHanded(true);
+        photo.setPassport(passport);
+        passport.setPhoto(photo);
+        passport.setIsHanded(Boolean.TRUE);
+        return passportRepository.save(passport);
+    }
+
+    @Override
+    public Passport cancelPassport(Passport passport, Integer employeeId) {
+        if (passport.getPreviousOwner() != null) {
+            throw new PassportCanceledException();
+        }
+        passport.setPreviousOwner(employeeId);
         return passportRepository.save(passport);
     }
 }

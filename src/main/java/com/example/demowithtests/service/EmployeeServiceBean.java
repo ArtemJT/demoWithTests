@@ -1,13 +1,13 @@
 package com.example.demowithtests.service;
 
 import com.example.demowithtests.domain.Employee;
+import com.example.demowithtests.domain.Passport;
+import com.example.demowithtests.domain.PassportPhoto;
 import com.example.demowithtests.repository.EmployeeRepository;
 import com.example.demowithtests.util.annotations.entity.ActivateCustomAnnotations;
 import com.example.demowithtests.util.annotations.entity.Name;
 import com.example.demowithtests.util.annotations.entity.ToLowerCase;
-import com.example.demowithtests.util.exception.EmployeeNotFoundException;
-import com.example.demowithtests.util.exception.InputParameterException;
-import com.example.demowithtests.util.exception.ResourceNotFoundException;
+import com.example.demowithtests.util.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -199,9 +199,27 @@ public class EmployeeServiceBean implements EmployeeService {
     }
 
     @Override
-    public Employee handPassportToEmployee(Integer employeeId, Integer passportId, String photoLink) {
+    public Employee handPassportToEmployee(Integer employeeId, Integer passportId, PassportPhoto photo) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(ResourceNotFoundException::new);
-        employee.setPassport(passportService.handPassport(passportId, photoLink));
+        employee.setPassport(passportService.handPassport(passportId, photo));
         return employeeRepository.save(employee);
+    }
+
+    @Override
+    public Employee cancelPassport(Integer employeeId) {
+        Employee employee = getById(employeeId);
+        Passport passport = Optional.ofNullable(employee.getPassport())
+                .orElseThrow(ResourceNotFoundException::new);
+        passportService.cancelPassport(passport, employeeId);
+        employee.setPassport(null);
+        return employeeRepository.save(employee);
+    }
+
+    @Override
+    public List<Passport> getAllCanceledPassports(Integer employeeId) {
+        return Optional.ofNullable(passportService.getAllHanded())
+                .orElseThrow(ResourceNotFoundException::new)
+                .stream().filter(pass -> employeeId.equals(pass.getPreviousOwner()))
+                .toList();
     }
 }

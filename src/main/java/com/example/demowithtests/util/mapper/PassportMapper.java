@@ -1,9 +1,12 @@
 package com.example.demowithtests.util.mapper;
 
 import com.example.demowithtests.domain.Passport;
+import com.example.demowithtests.domain.PassportPhoto;
 import com.example.demowithtests.dto.passport.PassportDto;
+import com.example.demowithtests.dto.passport.PassportPhotoDto;
 import com.example.demowithtests.dto.passport.PassportReadDto;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -22,5 +25,7 @@ public interface PassportMapper {
     Passport toEntity(PassportDto passportDto);
 
     List<PassportReadDto> listToReadDto(List<Passport> entityList);
+
+    PassportPhoto toEntity(PassportPhotoDto photoDto);
 
 }

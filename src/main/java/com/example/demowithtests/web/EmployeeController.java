@@ -1,12 +1,11 @@
 package com.example.demowithtests.web;
 
 import com.example.demowithtests.domain.Employee;
-import com.example.demowithtests.dto.employee.EmployeeDto;
-import com.example.demowithtests.dto.passport.PassportDto;
-import com.example.demowithtests.dto.employee.EmployeeReadDto;
-import com.example.demowithtests.dto.employee.EmployeeUpdateDto;
+import com.example.demowithtests.dto.employee.*;
+import com.example.demowithtests.dto.passport.PassportReadDto;
 import com.example.demowithtests.service.EmployeeService;
 import com.example.demowithtests.util.mapper.EmployeeMapper;
+import com.example.demowithtests.util.mapper.PassportMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -34,6 +33,7 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
     private final EmployeeMapper employeeMapper;
+    private final PassportMapper passportMapper;
 
     //Операция сохранения юзера в базу данных
     @PostMapping("/users")
@@ -171,7 +171,23 @@ public class EmployeeController {
 
     @PatchMapping("/users/setPass")
     @ResponseStatus(HttpStatus.OK)
-    public EmployeeDto setPassport(@RequestParam Integer employeeId, @RequestParam Integer passportId, @RequestParam String photoLink) {
-        return employeeMapper.toDto(employeeService.handPassportToEmployee(employeeId, passportId, photoLink));
+    public EmployeeDto setPassport(@RequestBody @Valid EmployeeDto handPassport) {
+        var photo = passportMapper.toEntity(handPassport.passport().photo());
+        return employeeMapper.toDto(employeeService.handPassportToEmployee(
+                handPassport.id(),
+                handPassport.passport().id(),
+                photo));
+    }
+
+    @PatchMapping("/users/cancelPass")
+    @ResponseStatus(HttpStatus.OK)
+    public EmployeeDto cancelPassport(@RequestBody EmployeeDto employee) {
+        return employeeMapper.toDto(employeeService.cancelPassport(employee.id()));
+    }
+
+    @GetMapping("/users/cancelPass")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PassportReadDto> canceledPassports(@RequestParam EmployeeDto employee) {
+        return passportMapper.listToReadDto(employeeService.getAllCanceledPassports(employee.id()));
     }
 }

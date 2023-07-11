@@ -1,7 +1,6 @@
 package com.example.demowithtests.web;
 
-import com.example.demowithtests.dto.passport.PassportDto;
-import com.example.demowithtests.dto.passport.PassportReadDto;
+import com.example.demowithtests.dto.passport.*;
 import com.example.demowithtests.service.PassportService;
 import com.example.demowithtests.util.mapper.PassportMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,15 +29,22 @@ public class PassportController {
         return passportMapper.toDto(passportService.create(passport));
     }
 
-    @GetMapping("/users/passport")
+    @GetMapping("/users/passports")
     @ResponseStatus(HttpStatus.OK)
     public List<PassportReadDto> getAllPassports() {
         return passportMapper.listToReadDto(passportService.getAll());
     }
 
+    @GetMapping("/users/passport")
+    @ResponseStatus(HttpStatus.OK)
+    public PassportReadDto getAllHandedPassports(@RequestBody PassportDto passport) {
+        return passportMapper.toReadDto(passportService.getById(passport.id()));
+    }
+
     @PatchMapping("/users/passport")
     @ResponseStatus(HttpStatus.OK)
-    public PassportDto updatePhoto(@RequestParam Integer passportId, @RequestParam String photoLink) {
-        return passportMapper.toDto(passportService.addPhoto(passportId, photoLink));
+    public PassportDto updatePhoto(@RequestBody PassportDto passport) {
+        var photo = passportMapper.toEntity(passport.photo());
+        return passportMapper.toDto(passportService.updatePhoto(passport.id(), photo));
     }
 }

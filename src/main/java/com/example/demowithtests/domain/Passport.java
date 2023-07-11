@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@AllArgsConstructor
+@AllArgsConstructor()
 @NoArgsConstructor
 @Builder
 @Getter
@@ -24,7 +24,8 @@ public class Passport {
     private String series;
     private LocalDateTime expireDate;
     private final String uuid = UUID.randomUUID().toString();
-    private boolean isHanded = false;
+    @Builder.Default
+    private Boolean isHanded = Boolean.FALSE;
 
     @OneToOne(mappedBy = "passport")
     private Employee employee;
@@ -33,4 +34,5 @@ public class Passport {
     @PrimaryKeyJoinColumn
     private PassportPhoto photo;
 
+    private Integer previousOwner;
 }

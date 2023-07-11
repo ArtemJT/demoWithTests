@@ -19,5 +19,6 @@ public record PassportReadDto(
         String uuid,
 
         LocalDateTime expireDate,
-        PassportPhotoDto photo) {
+        PassportPhotoDto photo,
+        Integer previousOwner) {
 }
