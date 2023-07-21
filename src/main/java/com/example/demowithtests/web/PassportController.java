@@ -37,14 +37,15 @@ public class PassportController {
 
     @GetMapping("/users/passport")
     @ResponseStatus(HttpStatus.OK)
-    public PassportReadDto getAllHandedPassports(@RequestBody PassportDto passport) {
-        return passportMapper.toReadDto(passportService.getById(passport.id()));
+    public PassportReadDto getPassport(@ModelAttribute("passId") Integer passId) {
+        return passportMapper.toReadDto(passportService.getById(passId));
     }
 
     @PatchMapping("/users/passport")
     @ResponseStatus(HttpStatus.OK)
-    public PassportDto updatePhoto(@RequestBody PassportDto passport) {
-        var photo = passportMapper.toEntity(passport.photo());
-        return passportMapper.toDto(passportService.updatePhoto(passport.id(), photo));
+    public PassportDto updatePhoto(@ModelAttribute("passId") Integer passId,
+                                   @ModelAttribute("photoDto") PassportPhotoDto photoDto) {
+        var photo = passportMapper.toEntity(photoDto);
+        return passportMapper.toDto(passportService.updatePhoto(passId, photo));
     }
 }

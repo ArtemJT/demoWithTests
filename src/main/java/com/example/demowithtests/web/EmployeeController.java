@@ -2,6 +2,7 @@ package com.example.demowithtests.web;
 
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.employee.*;
+import com.example.demowithtests.dto.passport.PassportPhotoDto;
 import com.example.demowithtests.dto.passport.PassportReadDto;
 import com.example.demowithtests.service.EmployeeService;
 import com.example.demowithtests.util.mapper.EmployeeMapper;
@@ -171,23 +172,22 @@ public class EmployeeController {
 
     @PatchMapping("/users/setPass")
     @ResponseStatus(HttpStatus.OK)
-    public EmployeeDto setPassport(@RequestBody @Valid EmployeeDto handPassport) {
-        var photo = passportMapper.toEntity(handPassport.passport().photo());
-        return employeeMapper.toDto(employeeService.handPassportToEmployee(
-                handPassport.id(),
-                handPassport.passport().id(),
-                photo));
+    public EmployeeDto setPassport(@ModelAttribute("empId") Integer empId,
+                                   @ModelAttribute("passId") Integer passId,
+                                   @ModelAttribute("photoDto") PassportPhotoDto photoDto) {
+        var photo = passportMapper.toEntity(photoDto);
+        return employeeMapper.toDto(employeeService.handPassportToEmployee(empId, passId, photo));
     }
 
     @PatchMapping("/users/cancelPass")
     @ResponseStatus(HttpStatus.OK)
-    public EmployeeDto cancelPassport(@RequestBody EmployeeDto employee) {
-        return employeeMapper.toDto(employeeService.cancelPassport(employee.id()));
+    public EmployeeDto cancelPassport(@ModelAttribute("empId") Integer empId) {
+        return employeeMapper.toDto(employeeService.cancelPassport(empId));
     }
 
     @GetMapping("/users/cancelPass")
     @ResponseStatus(HttpStatus.OK)
-    public List<PassportReadDto> canceledPassports(@RequestParam EmployeeDto employee) {
-        return passportMapper.listToReadDto(employeeService.getAllCanceledPassports(employee.id()));
+    public List<PassportReadDto> getEmployeeCanceledPassports(@ModelAttribute("empId") Integer empId) {
+        return passportMapper.listToReadDto(employeeService.getEmployeeCanceledPassports(empId));
     }
 }

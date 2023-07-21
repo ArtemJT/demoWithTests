@@ -216,7 +216,7 @@ public class EmployeeServiceBean implements EmployeeService {
     }
 
     @Override
-    public List<Passport> getAllCanceledPassports(Integer employeeId) {
+    public List<Passport> getEmployeeCanceledPassports(Integer employeeId) {
         return Optional.ofNullable(passportService.getAllHanded())
                 .orElseThrow(ResourceNotFoundException::new)
                 .stream().filter(pass -> employeeId.equals(pass.getPreviousOwner()))

@@ -6,13 +6,11 @@ import com.example.demowithtests.repository.PassportRepository;
 import com.example.demowithtests.util.exception.PassportCanceledException;
 import com.example.demowithtests.util.exception.PassportHandedException;
 import com.example.demowithtests.util.exception.ResourceNotFoundException;
-import com.example.demowithtests.util.mapper.PassportMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -20,7 +18,6 @@ import java.util.Optional;
 public class PassportServiceBean implements PassportService {
 
     private final PassportRepository passportRepository;
-    private final PassportMapper passportMapper;
 
     @Override
     public Passport create(Passport passport) {
@@ -53,8 +50,8 @@ public class PassportServiceBean implements PassportService {
         if (passport.getPreviousOwner() != null) {
             throw new PassportCanceledException();
         }
-        if (!passport.getIsHanded()) {
-            throw new RuntimeException("Passport didn't hand yet");
+        if (Boolean.FALSE.equals(passport.getIsHanded())) {
+            throw new PassportHandedException("Passport didn't hand yet");
         }
         PassportPhoto passportPhoto = passport.getPhoto();
         passportPhoto.setPhotoLink(photo.getPhotoLink());
@@ -64,7 +61,7 @@ public class PassportServiceBean implements PassportService {
     @Override
     public Passport handPassport(Integer passportId, PassportPhoto photo) throws PassportHandedException {
         Passport passport = getById(passportId);
-        if (passport.getIsHanded()) {
+        if (Boolean.TRUE.equals(passport.getIsHanded())) {
             throw new PassportHandedException();
         }
         photo.setPassport(passport);
