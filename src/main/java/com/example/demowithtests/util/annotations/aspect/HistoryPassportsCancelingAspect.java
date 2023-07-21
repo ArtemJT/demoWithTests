@@ -1,7 +1,6 @@
 package com.example.demowithtests.util.annotations.aspect;
 
 import com.example.demowithtests.domain.Passport;
-import com.example.demowithtests.util.EndpointCallingCounter;
 import com.example.demowithtests.util.PassportCancelingHistory;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
