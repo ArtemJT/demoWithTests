@@ -10,15 +10,17 @@ import java.util.*;
 /**
  * @author Artem Kovalov on 25.06.2023
  */
-public record PassportCancelingHistory() {
+public record PassportHistory() {
 
     private static final PassportMapper passportMapper = PassportMapper.INSTANCE;
     private static final Map<Integer, List<PassportReadDto>> passports = new HashMap<>();
 
-    public static void addCanceledPassport(Integer employeeId, Passport passport) {
+    public static void addPassportToHistory(Integer employeeId, Passport passport) {
         List<PassportReadDto> passportList = Optional.ofNullable(passports.get(employeeId))
                 .orElse(new ArrayList<>());
-        passportList.add(passportMapper.toReadDto(passport));
+        PassportReadDto readDto = passportMapper.toReadDto(passport);
+        passportList.removeIf(pass -> readDto.id().equals(pass.id()));
+        passportList.add(readDto);
         passports.put(employeeId, passportList);
     }
 
