@@ -25,8 +25,9 @@ public class ServiceExceptionHandler {
     }
 
     @ExceptionHandler(PassportHandedException.class)
-    protected ResponseEntity<ErrorDetails> handlePassportHand(WebRequest request) {
-        return getResponseEntity("Passport already handed", request, HttpStatus.NOT_FOUND);
+    protected ResponseEntity<ErrorDetails> handlePassportHand(WebRequest request, PassportHandedException ex) {
+        String message = ex != null ? ex.getLocalizedMessage() : "Passport already handed";
+        return getResponseEntity(message, request, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(PassportCanceledException.class)
