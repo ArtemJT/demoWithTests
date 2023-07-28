@@ -4,7 +4,7 @@ import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.service.EmployeeService;
-import com.example.demowithtests.util.config.EmployeeConverter;
+import com.example.demowithtests.util.mappers.EmployeeMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -31,7 +31,7 @@ import java.util.Set;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-    private final EmployeeConverter converter;
+    private final EmployeeMapper employeeMapper;
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,18 +42,19 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND. Specified employee request not found."),
             @ApiResponse(responseCode = "409", description = "Employee already exists")})
     public EmployeeDto saveEmployee(@RequestBody @Valid EmployeeDto requestForSave) {
-        log.debug("saveEmployee() - start: requestForSave = {}", requestForSave);
-        //var employee = converter.getMapperFacade().map(requestForSave, Employee.class);
-        var employee = converter.fromDto(requestForSave);
-        var dto = converter.toDto(employeeService.create(employee));
-        log.debug("saveEmployee() - stop: dto = {}", dto);
+        log.debug("saveEmployee() - start: requestForSave = {}", requestForSave.name());
+        var employee = employeeMapper.toEmployeeEntity(requestForSave);
+        var dto = employeeMapper.toEmployee(employeeService.create(employee));
+        log.debug("saveEmployee() - stop: dto = {}", dto.name());
         return dto;
     }
 
     @PostMapping("/usersS")
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveEmployee1(@RequestBody Employee employee) {
-        employeeService.create(employee);
+    public void saveEmployee(@RequestBody Employee employee) {
+        log.debug("saveEmployee() - start: employee = {}", employee.getId());
+        employeeService.createEM(employee);
+        log.debug("saveEmployee() - stop: employee = {}", employee);
     }
 
     @GetMapping("/users")
@@ -62,14 +63,15 @@ public class EmployeeController {
         return employeeService.getAll();
     }
 
-    @GetMapping("/users/p")
+    @GetMapping("/users/pages")
     @ResponseStatus(HttpStatus.OK)
-    public Page<Employee> getPage(
+    public Page<EmployeeReadDto> getPage(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
-        //log.debug("getPage() - start: page= {}, size = {}", page, size);
+        log.debug("getPage() - start: page= {}, size = {}", page, size);
         var paging = PageRequest.of(page, size);
-        var content = employeeService.getAllWithPagination(paging);
-        //log.debug("getPage() - end: content = {}", content);
+        var content = employeeService.getAllWithPagination(paging)
+                .map(employeeMapper::toEmployeeRead);
+        log.debug("getPage() - end: content = {}", content);
         return content;
     }
 
@@ -85,16 +87,19 @@ public class EmployeeController {
         log.debug("getEmployeeById() EmployeeController - start: id = {}", id);
         var employee = employeeService.getById(id);
         log.debug("getById() EmployeeController - to dto start: id = {}", id);
-        var dto = converter.toReadDto(employee);
+        var dto = employeeMapper.toEmployeeRead(employee);
         log.debug("getEmployeeById() EmployeeController - end: name = {}", dto.name);
         return dto;
     }
 
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Employee refreshEmployee(@PathVariable("id") Integer id, @RequestBody Employee employee) {
-
-        return employeeService.updateById(id, employee);
+    public EmployeeReadDto refreshEmployee(@PathVariable("id") Integer id, @RequestBody EmployeeDto employee) {
+        log.debug("refreshEmployee() EmployeeController - start: id = {}", id);
+        Employee entity = employeeMapper.toEmployeeEntity(employee);
+        EmployeeReadDto dto = employeeMapper.toEmployeeRead(employeeService.updateById(id, entity));
+        log.debug("refreshEmployee() EmployeeController - end: name = {}", dto.name);
+        return dto;
     }
 
     @DeleteMapping("/users/{id}")
@@ -111,14 +116,15 @@ public class EmployeeController {
 
     @GetMapping("/users/country")
     @ResponseStatus(HttpStatus.OK)
-    public Page<Employee> findByCountry(@RequestParam(required = false) String country,
+    public Page<EmployeeReadDto> findByCountry(@RequestParam(required = false) String country,
                                         @RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "3") int size,
                                         @RequestParam(defaultValue = "") List<String> sortList,
                                         @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) {
         //Pageable paging = PageRequest.of(page, size);
         //Pageable paging = PageRequest.of(page, size, Sort.by("name").ascending());
-        return employeeService.findByCountryContaining(country, page, size, sortList, sortOrder.toString());
+        return employeeService.findByCountryContaining(country, page, size, sortList, sortOrder.toString())
+                .map(employeeMapper::toEmployeeRead);
     }
 
     @GetMapping("/users/c")

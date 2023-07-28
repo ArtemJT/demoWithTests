@@ -25,8 +25,9 @@ public final class Employee {
     private String country;
     @ToLowerCase
     private String email;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "employee_id")
+    @OrderBy("id desc, country asc")
     private Set<Address> addresses = new HashSet<>();
 
     @Enumerated(EnumType.STRING)

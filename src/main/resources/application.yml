@@ -1,14 +1,16 @@
 # Spring Boot configuration
 spring:
-  #application:
-   # name: service
+  application:
+    name: employee-service
   #main:
    # allow-bean-definition-overriding: true
    # lazy-initialization: true
   # Database
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/employee
+    #url: jdbc:postgresql://localhost:5432/employee
+    # For dockerization
+    url: jdbc:postgresql://db:5432/employee
     username: postgres
     password: postgres
   # JPA properties
@@ -22,7 +24,7 @@ spring:
     #generate-ddl: true
   flyway:
     #    locations: filesystem:.\src\main\resources\db\migration
-    enabled: false
+    enabled: true
     #    clean-disabled: true
     baseline-on-migrate: true
 #  security:
