@@ -123,7 +123,12 @@
             <artifactId>flyway-core</artifactId>
             <version>9.3.1</version>
         </dependency>
-        <!-- mapstruct -->
+        <!-- liquibase -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.23.0</version>
+        </dependency>        <!-- mapstruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>

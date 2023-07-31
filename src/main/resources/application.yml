@@ -22,13 +22,21 @@ spring:
     #generate-ddl: true
   flyway:
     #    locations: filesystem:.\src\main\resources\db\migration
-    enabled: false
+    enabled: true
     #    clean-disabled: true
     baseline-on-migrate: true
+    default-schema: flyway
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/master.yml
+#    default-schema: liquibase
+
 #  security:
 #    user:
 #      name: admin
 #      password: admin
+
 # Logger configuration
 logging:
   pattern:
