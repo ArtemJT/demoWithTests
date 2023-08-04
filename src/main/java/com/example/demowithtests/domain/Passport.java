@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@AllArgsConstructor()
+@AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
-@Table(name = "passport")
+@Table(name = "passport", schema = "flyway")
 public class Passport {
 
     @Id

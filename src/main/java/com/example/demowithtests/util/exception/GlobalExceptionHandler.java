@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import java.sql.SQLException;
 import java.util.StringJoiner;
 
 import static com.example.demowithtests.util.exception.ErrorDetails.getResponseEntity;
@@ -24,5 +25,10 @@ public class GlobalExceptionHandler {
         });
         String message = "Entity not found with parameters: " + sj;
         return getResponseEntity(message, request, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SQLException.class)
+    protected ResponseEntity<ErrorDetails> handleRecordExists(WebRequest request, SQLException e) {
+        return getResponseEntity(e.getMessage(), request, HttpStatus.I_AM_A_TEAPOT);
     }
 }

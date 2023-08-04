@@ -29,9 +29,9 @@ public record EmployeeDto(
         @Schema(description = "Name of the country.", example = "England", required = true)
         String country,
 
-        @Email
-        @NotNull
-        @BlockedEmailDomains(endings = {".com1", ".ru", ".su", ".ру", ".рф"})
+//        @Email
+//        @NotNull
+//        @BlockedEmailDomains(endings = {".com1", ".ru", ".su", ".ру", ".рф"})
         @Schema(description = "Email address of an employee.", example = "billys@mail.com", required = true)
         String email,
 

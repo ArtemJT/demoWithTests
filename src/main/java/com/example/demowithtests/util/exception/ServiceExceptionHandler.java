@@ -35,12 +35,6 @@ public class ServiceExceptionHandler {
         return getResponseEntity("Passport already handed and canceled", request, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(SQLException.class)
-    protected ResponseEntity<ErrorDetails> handleRecordExists(WebRequest request) {
-        return getResponseEntity("SQL EXCEPTION", request, HttpStatus.I_AM_A_TEAPOT);
-    }
-
-
     @ExceptionHandler(ResourceWasDeletedException.class)
     protected ResponseEntity<ErrorDetails> handleResourceDeleted(WebRequest request) {
         return getResponseEntity("Resource already deleted", request, HttpStatus.NOT_FOUND);
