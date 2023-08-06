@@ -4,6 +4,7 @@ import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.service.EmployeeService;
+import com.example.demowithtests.service.EmployeeServiceEM;
 import com.example.demowithtests.util.mappers.EmployeeMapper;
 import com.example.demowithtests.web.EmployeeController;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,13 +53,16 @@ public class ControllerTests {
     EmployeeService service;
 
     @MockBean
+    EmployeeServiceEM serviceEM;
+
+    @MockBean
     EmployeeMapper employeeMapper;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("POST /api/users")
+    @DisplayName("POST API -> /api/users")
     @WithMockUser(roles = "ADMIN")
     public void createPassTest() throws Exception {
 
@@ -71,8 +75,8 @@ public class ControllerTests {
                 .name("Mike")
                 .email("mail@mail.com").build();
 
-        when(employeeMapper.toEmployeeEntity(any(EmployeeDto.class))).thenReturn(employee);
-        when(employeeMapper.toEmployee(any(Employee.class))).thenReturn(response);
+        when(employeeMapper.toEmployee(any(EmployeeDto.class))).thenReturn(employee);
+        when(employeeMapper.toEmployeeDto(any(Employee.class))).thenReturn(response);
         when(service.create(any(Employee.class))).thenReturn(employee);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders
@@ -90,20 +94,20 @@ public class ControllerTests {
     }
 
     @Test
-    @DisplayName("Entity POST /api/users")
-    @WithMockUser(roles = "ADMIN")
-    public void testEntitySave() throws Exception {
+    @DisplayName("POST API -> /api/users/jpa")
+    @WithMockUser(roles = "USER")
+    public void testSaveWithJpa() throws Exception {
 
         var employeeToBeReturn = Employee.builder()
                 .id(1)
                 .name("Mark")
                 .country("France").build();
 
-        doReturn(employeeToBeReturn).when(service).createEM(any());
-        when(this.service.createEM(any(Employee.class))).thenReturn(employeeToBeReturn);
+        doReturn(employeeToBeReturn).when(serviceEM).createWithJpa(any());
+        when(this.serviceEM.createWithJpa(any(Employee.class))).thenReturn(employeeToBeReturn);
         // Execute the POST request
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders
-                .post("/api/usersS")
+                .post("/api/users/jpa")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(employeeToBeReturn));
         mockMvc
@@ -111,12 +115,12 @@ public class ControllerTests {
                 .andExpect(status().isCreated())
                 .andReturn().getResponse();
 
-        verify(this.service, times(1)).createEM(any(Employee.class));
-        verifyNoMoreInteractions(this.service);
+        verify(this.serviceEM, times(1)).createWithJpa(any(Employee.class));
+        verifyNoMoreInteractions(this.serviceEM);
     }
 
     @Test
-    @DisplayName("GET /api/users/{id}")
+    @DisplayName("GET API -> /api/users/{id}")
     @WithMockUser(roles = "USER")
     public void getPassByIdTest() throws Exception {
 
@@ -129,7 +133,7 @@ public class ControllerTests {
                 .name("Mike")
                 .build();
 
-        when(employeeMapper.toEmployeeRead(any(Employee.class))).thenReturn(response);
+        when(employeeMapper.toEmployeeReadDto(any(Employee.class))).thenReturn(response);
         when(service.getById(1)).thenReturn(employee);
 
         MockHttpServletRequestBuilder mockRequest = get("/api/users/1");
@@ -143,16 +147,16 @@ public class ControllerTests {
     }
 
     @Test
-    @DisplayName("PUT /api/users/{id}")
+    @DisplayName("PUT API -> /api/users/{id}")
     @WithMockUser(roles = "ADMIN")
     public void updatePassByIdTest() throws Exception {
         var response = new EmployeeReadDto();
         response.id = 1;
         var employee = Employee.builder().id(1).build();
 
-        when(employeeMapper.toEmployeeEntity(any(EmployeeDto.class))).thenReturn(employee);
+        when(employeeMapper.toEmployee(any(EmployeeDto.class))).thenReturn(employee);
         when(service.updateById(eq(1), any(Employee.class))).thenReturn(employee);
-        when(employeeMapper.toEmployeeRead(any(Employee.class))).thenReturn(response);
+        when(employeeMapper.toEmployeeReadDto(any(Employee.class))).thenReturn(response);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders
                 .put("/api/users/1")
@@ -168,7 +172,7 @@ public class ControllerTests {
     }
 
     @Test
-    @DisplayName("DELETE /api/users/{id}")
+    @DisplayName("DELETE API -> /api/users/{id}")
     @WithMockUser(roles = "ADMIN")
     public void deletePassTest() throws Exception {
 
@@ -185,7 +189,7 @@ public class ControllerTests {
     }
 
     @Test
-    @DisplayName("GET /api/users/pages")
+    @DisplayName("GET API -> /api/users/pages")
     @WithMockUser(roles = "USER")
     public void getUsersPageTest() throws Exception {
 
@@ -202,9 +206,9 @@ public class ControllerTests {
         EmployeeReadDto dtoThree = new EmployeeReadDto();
 
         when(service.getAllWithPagination(eq(pageable))).thenReturn(employeesPage);
-        when(employeeMapper.toEmployeeRead(employee)).thenReturn(dto);
-        when(employeeMapper.toEmployeeRead(employeeTwo)).thenReturn(dtoTwo);
-        when(employeeMapper.toEmployeeRead(employeeThree)).thenReturn(dtoThree);
+        when(employeeMapper.toEmployeeReadDto(employee)).thenReturn(dto);
+        when(employeeMapper.toEmployeeReadDto(employeeTwo)).thenReturn(dtoTwo);
+        when(employeeMapper.toEmployeeReadDto(employeeThree)).thenReturn(dtoThree);
 
         MvcResult result = mockMvc.perform(get("/api/users/pages")
                         .param("page", "0")
@@ -213,9 +217,9 @@ public class ControllerTests {
                 .andReturn();
 
         verify(service).getAllWithPagination(eq(pageable));
-        verify(employeeMapper, times(1)).toEmployeeRead(employee);
-        verify(employeeMapper, times(1)).toEmployeeRead(employeeTwo);
-        verify(employeeMapper, times(1)).toEmployeeRead(employeeThree);
+        verify(employeeMapper, times(1)).toEmployeeReadDto(employee);
+        verify(employeeMapper, times(1)).toEmployeeReadDto(employeeTwo);
+        verify(employeeMapper, times(1)).toEmployeeReadDto(employeeThree);
 
         String contentType = result.getResponse().getContentType();
         assertNotNull(contentType);
