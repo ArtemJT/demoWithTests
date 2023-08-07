@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005_add_reference_for_users
+      author: artem
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: pass_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: pass_id
+                    referencedTableName: passport
+                    referencedColumnNames: id
+  - changeSet:
+      id: 006_add_reference_for_passport
+      author: artem
+      changes:
+        - addColumn:
+            tableName: passport
+            columns:
+              - column:
+                  name: previous_owner
+                  type: integer
+                  constraints:
+                    foreignKeyName: previous_owner
+                    referencedTableName: users
+                    referencedColumnNames: id
+
