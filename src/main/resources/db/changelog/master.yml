@@ -1,3 +1,9 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/0_initial_schema.yml
+      file: db/changelog/0_init.yml
+  - include:
+      file: db/changelog/1_fill_users_table.yml
+  - include:
+      file: db/changelog/2_create_passport_table.yml
+  - include:
+      file: db/changelog/3_add_references_for_users_and_passport.yml
