@@ -11,6 +11,9 @@ import java.time.Instant;
 @Builder
 public record EmployeeUpdateDto(
         @NotNull
+        Integer id,
+
+        @NotNull
         @Size(min = 2, max = 32, message = "Name must be between 2 and 32 characters long")
         @Schema(description = "Name of an employee.", example = "Billy", required = true)
         String name,

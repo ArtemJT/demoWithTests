@@ -16,13 +16,18 @@ import static com.example.demowithtests.util.exception.ErrorDetails.getResponseE
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorDetails> resourceNotFoundException(WebRequest request) {
-        StringJoiner sj = new StringJoiner("; ");
-        request.getParameterMap().forEach((key, value) -> {
-            String values = String.join(",", value);
-            sj.add(key + "=" + values);
-        });
-        String message = "Entity not found with parameters: " + sj;
+    public ResponseEntity<ErrorDetails> resourceNotFoundException(WebRequest request, ResourceNotFoundException ex) {
+        String message = "Entity not found with parameters: ";
+        if (ex.getMessage() != null) {
+            message += ex.getMessage();
+        } else {
+            StringJoiner sj = new StringJoiner("; ");
+            request.getParameterMap().forEach((key, value) -> {
+                String values = String.join(",", value);
+                sj.add(key + "=" + values);
+            });
+            message += sj;
+        }
         return getResponseEntity(message, request, HttpStatus.NOT_FOUND);
     }
 }
