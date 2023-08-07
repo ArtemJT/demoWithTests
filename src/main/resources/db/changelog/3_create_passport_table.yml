@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004_create_passport_table
+      author: artem
+      changes:
+        - createTable:
+            tableName: passport
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: expire_date
+                  type: timestamp
+              - column:
+                  name: is_deleted
+                  type: boolean
+                  defaultValueBoolean: false
+              - column:
+                  name: number
+                  type: bigint
+              - column:
+                  name: series
+                  type: varchar(255)
+              - column:
+                  name: uuidd
+                  type: varchar(255)

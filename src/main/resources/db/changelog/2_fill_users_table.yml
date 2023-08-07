@@ -1,0 +1,116 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003_fill_users_table
+      author: artem
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Marty Byrde
+              - column:
+                  name: email
+                  value: marty@byrdeEP.com
+              - column:
+                  name: country
+                  value: USA
+              - column:
+                  name: gender
+                  value: M
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Wendy Byrde
+              - column:
+                  name: email
+                  value: wendy@byrdeEP.com
+              - column:
+                  name: country
+                  value: USA
+              - column:
+                  name: gender
+                  value: F
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Charlotte Byrde
+              - column:
+                  name: email
+                  value: charlotte@byrdeEP.com
+              - column:
+                  name: country
+                  value: USA
+              - column:
+                  name: gender
+                  value: F
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Jonah Byrde
+              - column:
+                  name: email
+                  value: jonah@byrdeEP.com
+              - column:
+                  name: country
+                  value: USA
+              - column:
+                  name: gender
+                  value: M
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Ruth Langmore
+              - column:
+                  name: email
+                  value: ruth@byrdeEP.com
+              - column:
+                  name: country
+                  value: USA
+              - column:
+                  name: gender
+                  value: F
+              - column:
+                  name: is_deleted
+                  valueBoolean: true
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Rachel Garrison
+              - column:
+                  name: email
+                  value: rachel@missouribelle.us
+              - column:
+                  name: country
+                  value: USA
+              - column:
+                  name: gender
+                  value: F
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Camino Del Rio
+              - column:
+                  name: email
+                  value: camino@navarro.cartel
+              - column:
+                  name: country
+                  value: USA
+              - column:
+                  name: gender
+                  value: M
+              - column:
+                  name: is_deleted
+                  valueBoolean: true
